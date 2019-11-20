@@ -1,0 +1,45 @@
+import numpy as np
+import scipy.stats as stats
+import scipy.optimize as opt
+
+rv_unif = stats.uniform.rvs(size=10)
+print(rv_unif)
+rv_beta = stats.beta.rvs(size=10, a=4, b=2)
+print(rv_beta)
+
+np.random.seed(seed=205)
+rv_beta = stats.beta.rvs(size=10, a=4, b=2)
+print('method 1: ')
+print(rv_beta)
+
+np.random.seed(seed=3000)
+beta = stats.beta(a=4, b=2)
+print("method 2: ")
+print(beta.rvs(size=10))
+# norm distribution: loc is the mean, scale is the std;
+norm_dist = stats.norm(loc=0.5, scale=2)
+n = 200
+dat = norm_dist.rvs(size=n)
+print('mean=' + str(np.mean(dat)))
+print('median=' + str(np.median(dat)))
+print('standard deviation=' + str(np.std(dat)))
+
+# Kolmogorov-Smirnov test;
+mu = np.mean(dat)
+sigma = np.std(dat)
+stat_val, p_val = stats.kstest(dat, 'norm', (mu, sigma))
+print('KS-statistic D = %6.3f, p-value = %6.4f' % (stat_val, p_val))
+
+# t-test whether the mean of dat is zero
+stat_val, p_val =stats.ttest_1samp(dat, 0)
+print('one sample t-test: t-statistic D = %6.3f, p-value = %6.4f' % (stat_val, p_val))
+
+# t-test: Welch's t-test for unequal variation
+norm_dist2 = stats.norm(loc=-0.2, scale=1.2)
+# size = int(n/2) or n//2
+dat2 = norm_dist2.rvs(size=n//2)
+stat_val, p_val = stats.ttest_ind(dat, dat2, equal_var=False)
+print('Two sample t-statistic D = %6.3f, p-value = %6.4f' % (stat_val, p_val))
+
+# There are some tests to test whether the vars are equal like bartlett or levene,
+# and anderson_ksam p for Anderson-Darling K-test.
